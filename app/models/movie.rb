@@ -1,3 +1,3 @@
 class Movie < ActiveRecord::Base
-  #@all_ratings = ['G','PG','PG-13','R']
+  @all_ratings = Movie.distinct.pluck(:rating)
 end
