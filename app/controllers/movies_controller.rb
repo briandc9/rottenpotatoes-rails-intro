@@ -37,7 +37,6 @@ class MoviesController < ApplicationController
     end
     session["ratings"] = ratings
     session["sort"] = sort
-    session.clear
   end
 
   def new
