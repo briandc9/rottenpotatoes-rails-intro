@@ -7,26 +7,37 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @movies = Movie.all
     @all_ratings = Movie.all_ratings
-    ratings = params["ratings"] || session["ratings"]
-    session["ratings"] = ratings
-    if ratings.nil?
-      @ratings_to_show = []
-      @movies = Movie.with_ratings(ratings)
-    else
-      @ratings_to_show = ratings.keys
-      @movies = Movie.with_ratings(ratings.keys)
+    if params["ratings"].nil? and params["sort"].nil? and (session["ratings"] or session["sort"])
+      redirect_to movies_path("ratings": params["ratings"], "sort": params["sort"])
     end
-    sort = params["sort"] || session["sort"]
-    session["sort"] = sort
-    if sort != nil
-      @movies = @movies.order(sort)
-      if sort == "title"
-        @title = "p-3 mb-2 bg-warning text-primary"
+    if session.has_key?(:visited_before)
+      ratings = params["ratings"] || session["ratings"]
+      if ratings.nil?
+        @ratings_to_show = []
+        @movies = Movie.with_ratings(ratings)
       else
-        @rd = "p-3 mb-2 bg-warning text-primary"
+        @ratings_to_show = ratings.keys
+        @movies = Movie.with_ratings(ratings.keys)
       end
+      sort = params["sort"] || session["sort"]
+      
+      if sort != nil
+        @movies = @movies.order(sort)
+        if sort == "title"
+          @title = "hilite bg-warning"
+        else
+          @rd = "hilite bg-warning"
+        end
+      end
+    else
+      @ratings_to_show = @all_ratings
+      session[:visited_before] = true
     end
+    session["ratings"] = ratings
+    session["sort"] = sort
+    session.clear
   end
 
   def new
