@@ -10,7 +10,7 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.all_ratings
     if params["ratings"].nil? and params["sort"].nil? and (session["ratings"] or session["sort"])
-      redirect_to movies_path("ratings": params["ratings"], "sort": params["sort"])
+      redirect_to movies_path("ratings": session["ratings"], "sort": session["sort"])
     end
     if session.has_key?(:visited_before)
       ratings = params["ratings"] || session["ratings"]
