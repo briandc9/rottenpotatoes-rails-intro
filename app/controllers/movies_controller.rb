@@ -8,7 +8,8 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    ratings = params["ratings"]
+    ratings = params["ratings"] || session["ratings"]
+    session["ratings"] = ratings
     if ratings.nil?
       @ratings_to_show = []
       @movies = Movie.with_ratings(ratings)
@@ -16,7 +17,8 @@ class MoviesController < ApplicationController
       @ratings_to_show = ratings.keys
       @movies = Movie.with_ratings(ratings.keys)
     end
-    sort = params["sort"]
+    sort = params["sort"] || session["sort"]
+    session["sort"] = sort
     if sort != nil
       @movies = @movies.order(sort)
       if sort == "title"
